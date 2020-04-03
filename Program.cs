@@ -5,15 +5,15 @@ namespace SimpleChecker
 {
     class Program
     {
-        //Todo Set up proxies from text file, place hits in a file, multithreading, add CPM
+        //Todo: place hits in a file, multithreading, add CPM, add comboing
         static void Main(string[] args)
         {
             List<string> proxies = new List<string>();
             ProxyLoader pl = new ProxyLoader();
             proxies = pl.GenerateList();
-
             //this will need threaded
-            Request req = new Request();
+            Request req = new Request(proxies);
+            req.GrabProxie();
         }
     }
 }

