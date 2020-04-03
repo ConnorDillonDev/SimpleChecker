@@ -1,0 +1,10 @@
+/Users/connordillon/Documents/GitHub/SimpleChecker/bin/Debug/netcoreapp3.1/SimpleChecker.deps.json
+/Users/connordillon/Documents/GitHub/SimpleChecker/bin/Debug/netcoreapp3.1/SimpleChecker.runtimeconfig.json
+/Users/connordillon/Documents/GitHub/SimpleChecker/bin/Debug/netcoreapp3.1/SimpleChecker.runtimeconfig.dev.json
+/Users/connordillon/Documents/GitHub/SimpleChecker/bin/Debug/netcoreapp3.1/SimpleChecker.dll
+/Users/connordillon/Documents/GitHub/SimpleChecker/bin/Debug/netcoreapp3.1/SimpleChecker.pdb
+/Users/connordillon/Documents/GitHub/SimpleChecker/obj/Debug/netcoreapp3.1/SimpleChecker.csprojAssemblyReference.cache
+/Users/connordillon/Documents/GitHub/SimpleChecker/obj/Debug/netcoreapp3.1/SimpleChecker.AssemblyInfoInputs.cache
+/Users/connordillon/Documents/GitHub/SimpleChecker/obj/Debug/netcoreapp3.1/SimpleChecker.AssemblyInfo.cs
+/Users/connordillon/Documents/GitHub/SimpleChecker/obj/Debug/netcoreapp3.1/SimpleChecker.dll
+/Users/connordillon/Documents/GitHub/SimpleChecker/obj/Debug/netcoreapp3.1/SimpleChecker.pdb
