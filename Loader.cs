@@ -9,7 +9,7 @@ using System.Net.Http;
 using System.IO;
 namespace SimpleChecker
 {
-    public class ProxyLoader
+    public class Loader
     {
         protected List<string> ProxieList = new List<string>();
 
