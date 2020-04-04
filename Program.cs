@@ -5,7 +5,7 @@ namespace SimpleChecker
 {
     class Program
     {
-        //Todo: place hits in a file, multithreading, add CPM, add comboing
+        //Todo: multithreading, add CPM, add comboing
         static void Main(string[] args)
         {
             List<string> proxies = new List<string>();

