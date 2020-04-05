@@ -6,7 +6,7 @@ namespace SimpleChecker
 {
     class Program
     {
-        //Todo:  multithreading/async, add CPM
+        //Todo:  multithreading/async, add CPM, change to xnet.leaf its installed
         static void Main(string[] args)
         {
             Loader load = new Loader();
